@@ -48,7 +48,7 @@ public sealed class AvatarSkillDepotData : Data
     public new uint Id { get; set; }
 
     [JsonPropertyName("skills")]
-    public List<uint> Skills { get; set; }
+    public List<uint> Skills { get; set; } = [];
 
     [JsonPropertyName("energySkill")]
     public uint EnergySkill { get; set; }
