@@ -46,8 +46,8 @@ internal static partial class DataLoader
             var typeName = type.Name;
 
             if (typeof(GameData)
-                    .GetField(typeName, BindingFlags.Public | BindingFlags.Static)?
-                    .GetValue(null) is not
+                    .GetField(typeName, BindingFlags.Public | BindingFlags.Instance)?
+                    .GetValue(output) is not
                 IDictionary dictionary)
             {
                 Log.Warning("Resource {0} has an invalid type.", typeName);

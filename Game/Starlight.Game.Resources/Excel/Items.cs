@@ -3,7 +3,7 @@
 namespace Starlight.Game.Resources.Excel;
 
 [GameResource("WeaponExcelConfigData.json")]
-public sealed class WeaponExcelData : Data
+public sealed class WeaponData : Data
 {
     [JsonPropertyName("id")]
     public new uint Id { get; set; }
