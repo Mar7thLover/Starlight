@@ -193,7 +193,7 @@ internal static partial class DataLoader
 
     #region Expressions
 
-    [GeneratedRegex("ConfigAbility_($<type>)_($<name>)")]
+    [GeneratedRegex("ConfigAbility_(?<type>)_(?<name>)")]
     private static partial Regex AbilityRegex();
 
     [GeneratedRegex(@"scene([0-9]+)_point\.json")]
