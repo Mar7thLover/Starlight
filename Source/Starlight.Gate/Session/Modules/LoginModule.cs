@@ -88,7 +88,7 @@ public sealed class LoginModule(INetworkSession session)
         // Derive the session XOR-pad from the server seed. The client recovers
         // this same value as (clientSeed ^ server_rand_key); server_rand_key
         // carries the combined seed so only the holder of clientSeed can extract it.
-        session.XorPad = MtKey.Generate((ulong)seed.ServerSeed);
+        session.Rekey(MtKey.Generate((ulong)seed.ServerSeed));
     }
 
     /// Mixes the client's seed with a fresh server one, then encrypts and signs the result.
