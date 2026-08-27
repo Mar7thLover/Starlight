@@ -9,6 +9,8 @@ public sealed class GameData : IHostedService
 {
     #region Excel
 
+    [UsedImplicitly] public readonly Dictionary<uint, AvatarData> AvatarData = new();
+    [UsedImplicitly] public readonly Dictionary<uint, AvatarSkillDepotData> AvatarSkillDepotData = new();
     [UsedImplicitly] public readonly Dictionary<uint, AvatarTalentData> AvatarTalentData = new();
     [UsedImplicitly] public readonly Dictionary<uint, CoopPointData> CoopPointData = new();
 
@@ -16,6 +18,7 @@ public sealed class GameData : IHostedService
 
     #region Binary
 
+    public readonly Dictionary<uint, List<Ability>> AvatarAbilities = new();
     public readonly Dictionary<uint, Dictionary<uint, PointData>> ScenePoints = new();
 
     #endregion

@@ -15,9 +15,15 @@ internal static partial class DataLoader
     /// </summary>
     public static void Initialize(GameData output)
     {
+        // First pass of data loading.
         Task.WaitAll(
             Task.Run(() => LoadScenePoints(output)),
             Task.Run(() => LoadExcels(output))
+        );
+
+        // Second pass of data loading.
+        Task.WaitAll(
+            Task.Run(() => LoadAbilities(output))
         );
     }
 
@@ -92,6 +98,48 @@ internal static partial class DataLoader
     #region Binary Data
 
     /// <summary>
+    /// Loads all abilities for avatars, monsters, and activities.
+    /// </summary>
+    private static void LoadAbilities(GameData output)
+    {
+        var regex = AbilityRegex();
+        var mapping = output.AvatarData
+            .ToDictionary(kvp => kvp.Value.AvatarName, kvp => kvp.Key);
+
+        var stopwatch = Stopwatch.StartNew();
+
+        Resources.Loader.ListFiles("BinOutput/Ability/Temp", "ConfigAbility_*.json", true)
+            .Select((string? type, string? name, List<Ability> abilities) (p) => {
+                var match = regex.Match(p);
+
+                if (!match.Success)
+                {
+                    return (null, null, []);
+                }
+
+                var type = match.Groups["type"].Value;
+                var name = match.Groups["name"].Value;
+                var data = Resources.Loader.ReadJson<List<Ability>>(p);
+
+                return data is null ? (null, null, []) : (type, name, data);
+            })
+            .OfType<(string type, string name, List<Ability> abilities)>()
+            .ToList()
+            .ForEach(p => {
+                switch (p.type)
+                {
+                    case "Avatar":
+                        if (!mapping.TryGetValue(p.name, out var avatarId)) return;
+
+                        output.AvatarAbilities[avatarId] = p.abilities;
+                        break;
+                }
+            });
+
+        Log.Verbose("Loading abilities took {0}ms with {1} entries", stopwatch.ElapsedMilliseconds, output.AvatarAbilities.Count);
+    }
+
+    /// <summary>
     /// Loads all teleport waypoints for all scenes.
     /// </summary>
     private static void LoadScenePoints(GameData output)
@@ -144,6 +192,9 @@ internal static partial class DataLoader
     #endregion
 
     #region Expressions
+
+    [GeneratedRegex("ConfigAbility_($<type>)_($<name>)")]
+    private static partial Regex AbilityRegex();
 
     [GeneratedRegex(@"scene([0-9]+)_point\.json")]
     private static partial Regex ScenePointRegex();
