@@ -23,7 +23,7 @@ internal static partial class DataLoader
 
         // Second pass of data loading.
         Task.WaitAll(
-            Task.Run(() => LoadAbilities(output))
+            Task.Run(() => LoadAvatars(output))
         );
     }
 
@@ -98,45 +98,33 @@ internal static partial class DataLoader
     #region Binary Data
 
     /// <summary>
-    /// Loads all abilities for avatars, monsters, and activities.
+    /// Loads every avatar's <c>ConfigAvatar</c> file, keyed by avatar ID.
     /// </summary>
-    private static void LoadAbilities(GameData output)
+    private static void LoadAvatars(GameData output)
     {
-        var regex = AbilityRegex();
-        var mapping = output.AvatarData
-            .ToDictionary(kvp => kvp.Value.AvatarName, kvp => kvp.Key);
-
+        var regex = AvatarRegex();
         var stopwatch = Stopwatch.StartNew();
 
-        Resources.Loader.ListFiles("BinOutput/Ability/Temp", "ConfigAbility_*.json", true)
-            .Select((string? type, string? name, List<Ability> abilities) (p) => {
+        var configs = Resources.Loader.ListFiles("BinOutput/Avatar", "ConfigAvatar_*.json")
+            .Select((string? name, AvatarConfig? config) (p) => {
                 var match = regex.Match(p);
 
-                if (!match.Success)
-                {
-                    return (null, null, []);
-                }
-
-                var type = match.Groups["type"].Value;
-                var name = match.Groups["name"].Value;
-                var data = Resources.Loader.ReadJson<List<Ability>>(p);
-
-                return data is null ? (null, null, []) : (type, name, data);
+                return !match.Success ? (null, null) :
+                    (match.Groups["name"].Value, Resources.Loader.ReadJson<AvatarConfig>(p));
             })
-            .OfType<(string type, string name, List<Ability> abilities)>()
-            .ToList()
-            .ForEach(p => {
-                switch (p.type)
-                {
-                    case "Avatar":
-                        if (!mapping.TryGetValue(p.name, out var avatarId)) return;
+            .Where(p => p.config is not null)
+            .ToDictionary(p => p.name!, p => p.config!);
 
-                        output.AvatarAbilities[avatarId] = p.abilities;
-                        break;
-                }
-            });
+        // Resolved in this direction because internal names aren't unique; 12 avatars are "Kate".
+        foreach (var (avatarId, avatar) in output.AvatarData)
+        {
+            if (configs.TryGetValue(avatar.AvatarName, out var config))
+            {
+                output.Avatars[avatarId] = config;
+            }
+        }
 
-        Log.Verbose("Loading abilities took {0}ms with {1} entries", stopwatch.ElapsedMilliseconds, output.AvatarAbilities.Count);
+        Log.Verbose("Loading avatars took {0}ms with {1} entries", stopwatch.ElapsedMilliseconds, output.Avatars.Count);
     }
 
     /// <summary>
@@ -193,8 +181,8 @@ internal static partial class DataLoader
 
     #region Expressions
 
-    [GeneratedRegex("ConfigAbility_(?<type>)_(?<name>)")]
-    private static partial Regex AbilityRegex();
+    [GeneratedRegex(@"ConfigAvatar_(?<name>.+)\.json")]
+    private static partial Regex AvatarRegex();
 
     [GeneratedRegex(@"scene([0-9]+)_point\.json")]
     private static partial Regex ScenePointRegex();

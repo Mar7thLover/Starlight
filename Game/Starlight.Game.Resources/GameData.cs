@@ -20,7 +20,7 @@ public sealed class GameData(IConfiguration config) : IHostedService
 
     #region Binary
 
-    public readonly Dictionary<uint, List<Ability>> AvatarAbilities = new();
+    public readonly Dictionary<uint, AvatarConfig> Avatars = new();
     public readonly Dictionary<uint, Dictionary<uint, PointData>> ScenePoints = new();
 
     #endregion

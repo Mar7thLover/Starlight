@@ -10,8 +10,8 @@ public sealed class AvatarData : Data
 
     /// Used for extracting the avatar's internal name.
     /// Combined with avatar ability configs to look up the proper data.
-    [JsonPropertyName("imageName")]
-    public string ImageName { get; set; } = string.Empty;
+    [JsonPropertyName("iconName")]
+    public string IconName { get; set; } = string.Empty;
 
     /// The ID of the default weapon the avatar spawns with.
     [JsonPropertyName("initialWeapon")]
@@ -37,8 +37,8 @@ public sealed class AvatarData : Data
 
     /// The internal name of the avatar comes at the end of the string.
     /// <br/>
-    /// Example: <c>AvatarImage_Forward_[name]</c>
-    public string AvatarName => ImageName.Split('_').Last();
+    /// Example: <c>UI_AvatarIcon_[name]</c>
+    public string AvatarName => IconName.Split('_').Last();
 }
 
 [GameResource("AvatarSkillDepotExcelConfigData.json")]
