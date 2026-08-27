@@ -8,6 +8,10 @@ public interface IPlayer
 {
     uint Uid { get; internal set; }
 
+    /// The SDK account behind this player. Set from the gate's connect notify, since the
+    /// account uid on PlayerLoginReq comes through empty.
+    string AccountUid { get; internal set; }
+
     /// <summary>Resolves this player's instance of <typeparamref name="TModule"/>.</summary>
     TModule Module<TModule>() where TModule : class, IModule;
 

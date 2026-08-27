@@ -1,4 +1,4 @@
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Starlight.Game.Modules;
 using Starlight.Kcp;
@@ -25,6 +25,7 @@ public sealed class StarlightPlayer : IPlayer
     }
 
     public uint Uid { get; set; }
+    public string AccountUid { get; set; } = string.Empty;
 
     /// <inheritdoc/>
     public TModule Module<TModule>() where TModule : class, IModule

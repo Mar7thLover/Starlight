@@ -1,4 +1,4 @@
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 using Starlight.Game.Modules;
 using Starlight.Kcp;
 using Starlight.Protocol;
@@ -24,12 +24,12 @@ public sealed class PlayerModule(RpcTransport rpc, ILogger<PlayerModule> logger,
         try
         {
             // Fetch the player's full data from the database gateway.
-            var request = new FetchPlayerReq { AccountUid = msg.AccountUid, Create = true };
+            var request = new FetchPlayerReq { AccountUid = player.AccountUid, Create = true };
             var response = await rpc.Request<FetchPlayerReq, FetchPlayerRsp>(GameSubjects.FetchPlayer, request);
 
             if (response is not { Player: {} data, Retcode: StarlightRetcode.Success })
             {
-                logger.LogError("Failed to fetch player '{AccountId}': {Response}", msg.AccountUid, response.Retcode);
+                logger.LogError("Failed to fetch player '{AccountId}': {Response}", player.AccountUid, response.Retcode);
 
                 throw new KickException(DisconnectReason.ServerKick,
                     new PlayerLoginRsp { Retcode = (int)Retcode.RETCODE_ACCOUNT_INFO_NOT_EXIST });
