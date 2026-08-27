@@ -22,7 +22,7 @@ public sealed class WorldModule(IPlayer player, WorldManager worlds) : IModule
     /// The scene this player is standing in, or null until their first scene load.
     public Scene? Scene { get; internal set; }
 
-    [Opcode(typeof(PlayerLoginReq))]
+    [Lifecycle(LifecycleEvent.PlayerLogin)]
     public void OnLogin() => EnterOwnWorld();
 
     /// <summary>Puts this player into their own world. Call once login has assigned their uid.</summary>

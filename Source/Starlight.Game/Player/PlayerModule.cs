@@ -12,11 +12,12 @@ namespace Starlight.Game.Player;
 /// </summary>
 public sealed class PlayerModule(RpcTransport rpc, ILogger<PlayerModule> logger, IPlayer player) : IModule
 {
-    /// This handler serves to authenticate & fetch the player's initial data.
-    /// <br/>
-    /// It should be called before all login handlers.
-    [Opcode(Priority = 1000)]
-    public async Task OnStartLogin(PlayerLoginReq msg)
+    /// <summary>
+    /// Authenticates the player and loads their data, then hands off to every
+    /// <see cref="LifecycleEvent.PlayerLogin"/> handler before answering the client.
+    /// </summary>
+    [Opcode]
+    public async Task<PlayerLoginRsp> OnLogin(PlayerLoginReq msg)
     {
         try
         {
@@ -42,16 +43,15 @@ public sealed class PlayerModule(RpcTransport rpc, ILogger<PlayerModule> logger,
             throw new KickException(DisconnectReason.ServerKick,
                 new PlayerLoginRsp { Retcode = (int)Retcode.RETCODE_ACCOUNT_VEIRFY_ERROR });
         }
-    }
 
-    /// This handler serves only to finish the login flow.
-    /// <br/>
-    /// It should be called after all login handlers.
-    [Opcode(typeof(PlayerLoginReq), Priority = -1000)]
-    public PlayerLoginRsp OnFinishLogin() => new() {
-        IsUseAbilityHash = true,
-        AbilityHashCode = 1844674,
-        GameBiz = "hk4e_global",
-        CountryCode = "US"
-    };
+        // Everything that has to be in place before the client is told it is logged in.
+        await player.Emit(LifecycleEvent.PlayerLogin);
+
+        return new PlayerLoginRsp {
+            IsUseAbilityHash = true,
+            AbilityHashCode = 1844674,
+            GameBiz = "hk4e_global",
+            CountryCode = "US"
+        };
+    }
 }

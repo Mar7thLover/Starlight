@@ -65,6 +65,7 @@ public sealed class GameServerService(
                     sessionInfo.RemoteAddr, sessionInfo.RemotePort);
 
                 listener.Dispose();
+                _ = player.Close();
             };
         }
         catch (Exception ex)
