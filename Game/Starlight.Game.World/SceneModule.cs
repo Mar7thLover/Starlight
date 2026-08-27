@@ -72,11 +72,13 @@ public sealed class SceneModule(IPlayer player) : IModule
         var teamUpdate = new SceneTeamUpdateNotify();
 
         _spawned.Clear();
+
         foreach (var (slot, avatar) in player.Module<AvatarModule>().Team.Index())
         {
             var entity = AvatarEntity.Create(world, player.Uid, module.PeerId, avatar, SpawnPosition);
 
             var isCurrent = slot == 0;
+
             if (isCurrent)
             {
                 enterInfo.CurAvatarEntityId = entity.EntityId;
@@ -125,10 +127,7 @@ public sealed class SceneModule(IPlayer player) : IModule
     }
 
     [Opcode]
-    public PostEnterSceneRsp OnPostEnterScene(PostEnterSceneReq msg)
-    {
+    public PostEnterSceneRsp OnPostEnterScene(PostEnterSceneReq msg) =>
         // TODO: Validate `enter_scene_token`.
-
-        return new PostEnterSceneRsp { EnterSceneToken = msg.EnterSceneToken };
-    }
+        new() { EnterSceneToken = msg.EnterSceneToken };
 }

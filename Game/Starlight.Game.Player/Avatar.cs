@@ -118,5 +118,5 @@ public sealed class Avatar
 
     /// <summary>The 131-multiplier string hash the client looks abilities up by. The overflow is part of it.</summary>
     private static uint Hash(string name)
-        => name.Aggregate(0u, (hash, character) => hash * 131 + character);
+        => name.Aggregate(seed: 0u, (hash, character) => hash * 131 + character);
 }

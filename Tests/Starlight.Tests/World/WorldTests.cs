@@ -46,7 +46,7 @@ public sealed class WorldPeerTests
         var world = Session.Player(services, registry, uid: 1001).Module<WorldModule>();
         world.EnterOwnWorld();
 
-        Assert.Equal(1u, world.PeerId);
+        Assert.Equal(expected: 1u, world.PeerId);
         Assert.Equal(world.PeerId, world.World.HostPeerId);
     }
 
@@ -67,9 +67,9 @@ public sealed class WorldPeerTests
         guest.Enter(target);
 
         Assert.Same(host.World, guest.World);
-        Assert.Equal(2u, guest.PeerId);
-        Assert.Equal(1u, guest.World.HostPeerId);
-        Assert.Equal(2, host.World.Peers.Count);
+        Assert.Equal(expected: 2u, guest.PeerId);
+        Assert.Equal(expected: 1u, guest.World.HostPeerId);
+        Assert.Equal(expected: 2, host.World.Peers.Count);
     }
 
     [Fact]
@@ -102,13 +102,13 @@ public sealed class WorldPeerTests
         var guest = Session.Player(services, registry, uid: 1002);
 
         // A visitor reaching the world before its owner takes peer 1.
-        Assert.Equal(1u, world.Join(guest));
-        Assert.Equal(0u, world.HostPeerId);
+        Assert.Equal(expected: 1u, world.Join(guest));
+        Assert.Equal(expected: 0u, world.HostPeerId);
 
-        Assert.Equal(1u, world.Join(owner));
-        Assert.Equal(1u, world.HostPeerId);
-        Assert.Equal(2u, world.PeerIdOf(guest));
-        Assert.Equal(2, world.Peers.Count);
+        Assert.Equal(expected: 1u, world.Join(owner));
+        Assert.Equal(expected: 1u, world.HostPeerId);
+        Assert.Equal(expected: 2u, world.PeerIdOf(guest));
+        Assert.Equal(expected: 2, world.Peers.Count);
     }
 
     [Fact]
@@ -124,13 +124,13 @@ public sealed class WorldPeerTests
         var first = Session.Player(services, registry, uid: 1002);
         var second = Session.Player(services, registry, uid: 1003);
         world.Join(first);
-        Assert.Equal(3u, world.Join(second));
+        Assert.Equal(expected: 3u, world.Join(second));
 
         world.Leave(first);
 
         // The gap left at 2 gets filled before anything climbs past the seats in use.
-        Assert.Equal(2u, world.Join(Session.Player(services, registry, uid: 1004)));
-        Assert.Equal(3, world.Peers.Count);
+        Assert.Equal(expected: 2u, world.Join(Session.Player(services, registry, uid: 1004)));
+        Assert.Equal(expected: 3, world.Peers.Count);
     }
 
     [Fact]
@@ -147,8 +147,8 @@ public sealed class WorldPeerTests
         world.Join(guest);
         world.Join(guest);
 
-        Assert.Equal(2, world.Peers.Count);
-        Assert.Equal(2u, world.PeerIdOf(guest));
+        Assert.Equal(expected: 2, world.Peers.Count);
+        Assert.Equal(expected: 2u, world.PeerIdOf(guest));
     }
 
     [Fact]
@@ -163,12 +163,12 @@ public sealed class WorldPeerTests
 
         // The guest arrives first, so the module hands out peer 1 until the owner shows up.
         guest.Enter(worlds.Open(owner));
-        Assert.Equal(1u, guest.PeerId);
+        Assert.Equal(expected: 1u, guest.PeerId);
 
         owner.Module<WorldModule>().EnterOwnWorld();
 
-        Assert.Equal(2u, guest.PeerId);
-        Assert.Equal(1u, guest.World.HostPeerId);
+        Assert.Equal(expected: 2u, guest.PeerId);
+        Assert.Equal(expected: 1u, guest.World.HostPeerId);
     }
 }
 

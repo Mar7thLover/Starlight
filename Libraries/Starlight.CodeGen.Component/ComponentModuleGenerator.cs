@@ -284,6 +284,7 @@ public sealed class ComponentModuleGenerator : IIncrementalGenerator
     private static string EventLiteral(TypedConstant @event)
     {
         var type = @event.Type!;
+
         var name = ((INamedTypeSymbol)type).GetMembers()
             .OfType<IFieldSymbol>()
             .FirstOrDefault(f => f.HasConstantValue && Equals(f.ConstantValue, @event.Value))?.Name;

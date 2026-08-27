@@ -88,10 +88,13 @@ public sealed class ModuleRegistry
 
         return this;
 
-        int Resolve(Type module) => _moduleIndex.TryGetValue(module, out var index) ?
-            index :
-            throw new InvalidOperationException(
-                $"A handler is registered for '{module.Name}', but that module was never added.");
+        int Resolve(Type module)
+        {
+            return _moduleIndex.TryGetValue(module, out var index) ?
+                index :
+                throw new InvalidOperationException(
+                    $"A handler is registered for '{module.Name}', but that module was never added.");
+        }
     }
 
     private void ThrowIfImmutable()

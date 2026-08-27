@@ -109,7 +109,8 @@ internal static partial class DataLoader
             .Select((string? name, AvatarConfig? config) (p) => {
                 var match = regex.Match(p);
 
-                return !match.Success ? (null, null) :
+                return !match.Success ?
+                    (null, null) :
                     (match.Groups["name"].Value, Resources.Loader.ReadJson<AvatarConfig>(p));
             })
             .Where(p => p.config is not null)

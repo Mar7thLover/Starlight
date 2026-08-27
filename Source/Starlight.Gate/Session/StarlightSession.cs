@@ -149,8 +149,7 @@ public sealed class StarlightSession : INetworkSession
                     _xorPad = pending;
                     _pendingPad = null;
                 }
-            }
-            else
+            } else
             {
                 // Neither pad fits, so this is corruption rather than the rekey. Undo the
                 // guess so the parse below reports what the live pad actually produced.

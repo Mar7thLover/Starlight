@@ -48,6 +48,7 @@ public sealed class PlayerModule(RpcTransport rpc, ILogger<PlayerModule> logger,
         }
 
         await player.Send(OpenStates());
+
         await player.Send(new PlayerDataNotify {
             NickName = nickname,
             ServerTime = (ulong)DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
